@@ -1,0 +1,33 @@
+# 毎日新聞 · 日文學習 App
+
+每天自動從 NHK Web Easy 抓取新聞，用 Gemini AI 分析單字、文法、發音，並推播通知到手機。
+
+## 檔案說明
+- `index.html` — 學習 App 主頁面（部署到 Netlify）
+- `fetch-and-analyze.js` — 每日自動執行的分析腳本
+- `today.json` — 每天自動產生的學習內容（由 GitHub Actions 更新）
+- `.github/workflows/daily-lesson.yml` — 每天早上8點自動執行的排程
+
+## 設定步驟
+
+### 1. 建立 GitHub Repository
+1. 前往 github.com，登入後點「New repository」
+2. 名稱輸入 `japanese-learning`，選 Public，點「Create repository」
+3. 把這個資料夾的所有檔案上傳上去
+
+### 2. 設定 GitHub Secrets
+1. 在 GitHub repo 頁面點「Settings」→「Secrets and variables」→「Actions」
+2. 點「New repository secret」
+3. 新增：Name = `GEMINI_API_KEY`，Value = 你的 Gemini API Key
+
+### 3. 連結 Netlify
+1. 在 Netlify 點「Add new project」→「Import an existing project」
+2. 選「GitHub」→ 選 `japanese-learning` repo
+3. Build command 留空，Publish directory 輸入 `.`
+4. 點「Deploy」
+
+### 4. 完成！
+- 每天早上8點 GitHub Actions 自動執行
+- 更新 today.json 到 GitHub
+- Netlify 偵測到更新自動重新部署
+- 手機收到推播通知
