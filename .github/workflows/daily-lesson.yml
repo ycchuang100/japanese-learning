@@ -1,0 +1,33 @@
+name: 每日日文新聞學習更新
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-daily-lesson:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 取得程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 執行新聞分析
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FCM_SERVER_KEY: ${{ secrets.FCM_SERVER_KEY }}
+        run: node fetch-and-analyze.js
+
+      - name: 提交並推送 today.json
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'bot@github.com'
+          git add today.json
+          git diff --staged --quiet || git commit -m "每日更新：$(date +'%Y-%m-%d') 日文新聞學習內容"
+          git push
