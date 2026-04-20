@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>毎日新聞 · 日文學習</title>
+<title>日文學習：日文詞句賞析</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -179,7 +179,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo">毎日新聞</div>
+  <div class="topbar-logo">日文學習：日文詞句賞析</div>
   <div class="date-badge" id="today-date"></div>
   <button class="notif-btn-top" id="notif-top-btn" onclick="handleNotifBtn()">
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a5 5 0 0 0-5 5v2l-1.5 2h13L13 9V7a5 5 0 0 0-5-5z"/><path d="M6.5 13.5a1.5 1.5 0 0 0 3 0"/></svg>
@@ -191,7 +191,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <div id="notif-banner-wrap"></div>
   <div id="content">
     <div class="loading-wrap">
-      <div class="loading-jp">毎日新聞</div>
+      <div class="loading-jp">日文學習：日文詞句賞析</div>
       <div class="loading-sub">載入今日課程中…</div>
     </div>
   </div>
@@ -318,7 +318,7 @@ function renderLesson(d) {
   document.getElementById('content').innerHTML = `
     <div class="day-header">
       <div class="day-label">TODAY · NHK WEB EASY</div>
-      <div class="day-title">今日新聞學習</div>
+      <div class="day-title">今日學習</div>
     </div>
 
     <div class="news-card">
@@ -407,7 +407,7 @@ async function handleNotifBtn() {
   if (Notification.permission === 'granted') { scheduleDailyReminder(); return; }
   const perm = await Notification.requestPermission();
   if (perm === 'granted') {
-    new Notification('毎日新聞 · 通知已開啟！', { body: '每天早上 8:00 會提醒你學習今日日文新聞 🎌' });
+    new Notification('日文學習：日文詞句賞析· 通知已開啟！', { body: '每天早上 8:00 會提醒你學習今日日文 🎌' });
     scheduleDailyReminder();
   }
   updateNotifUI();
@@ -421,7 +421,7 @@ function scheduleDailyReminder() {
   const ms = target - now;
   setTimeout(() => {
     if (Notification.permission === 'granted') {
-      new Notification('📰 今日日文新聞課程', { body: '早安！今天的新聞學習已準備好，快來看看吧 🌅' });
+      new Notification('📰 今日日文課程', { body: '早安！今天的學習已準備好，快來看看吧 🌅' });
     }
     scheduleDailyReminder();
   }, ms);
