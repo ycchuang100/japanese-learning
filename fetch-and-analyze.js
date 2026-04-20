@@ -118,7 +118,7 @@ quiz出2題，測驗今日單字或文法。`;
 
     const postData = JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.3, maxOutputTokens: 2000 }
+      generationConfig: { temperature: 0.3, maxOutputTokens: 4000 }
     });
 
     const options = {
@@ -135,7 +135,11 @@ quiz出2題，測驗今日單字或文法。`;
         try {
           const resp = JSON.parse(data);
           const text = resp.candidates[0].content.parts[0].text;
-          const clean = text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+          // Extract JSON more robustly
+          let clean = text;
+          const jsonMatch = text.match(/\{[\s\S]*\}/);
+          if (jsonMatch) clean = jsonMatch[0];
+          else clean = text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
           const analysis = JSON.parse(clean);
           resolve(analysis);
         } catch(e) {
