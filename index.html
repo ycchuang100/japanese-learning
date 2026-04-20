@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>日文學習：日文詞句賞析</title>
+<title>毎日新聞 · 日文學習</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -50,7 +50,7 @@
   --r: 10px; --r2: 16px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 17px; line-height: 1.6; }
 
 /* TOP BAR */
 .topbar { background: var(--ink); color: white; display: flex; align-items: center; gap: 10px; padding: 0 1rem; height: 52px; position: sticky; top: 0; z-index: 100; }
@@ -81,7 +81,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .news-card { background: var(--ink); color: white; border-radius: var(--r2); padding: 1.5rem; margin-bottom: 1rem; position: relative; overflow: hidden; }
 .news-card::before { content:''; position:absolute; top:-40px; right:-40px; width:150px; height:150px; border-radius:50%; background:rgba(167,243,198,0.06); }
 .news-tag { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; margin-bottom: 8px; }
-.news-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 1.15rem; line-height: 1.9; margin-bottom: 6px; }
+.news-jp { font-size: 1.3rem !important; font-family: 'Noto Sans JP', sans-serif; font-size: 1.15rem; line-height: 1.9; margin-bottom: 6px; }
 .news-yomi { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 4px; font-family: 'Noto Sans JP', sans-serif; }
 .news-zh { font-size: 13px; color: rgba(255,255,255,0.55); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; margin-top: 6px; }
 .speak-btn { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 99px; padding: 6px 14px; font-size: 12px; font-family: inherit; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
@@ -89,16 +89,16 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .speak-btn.playing { background: rgba(167,243,198,0.2); border-color: #a7f3c6; }
 
 /* SECTION */
-.section-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 99px; margin-bottom: 10px; }
+.section-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 99px; margin-bottom: 10px; }
 .card { background: white; border: 1px solid var(--border); border-radius: var(--r2); padding: 1.25rem; margin-bottom: 1rem; }
 
 /* VOCAB */
 .vocab-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .vocab-item:last-child { border-bottom: none; padding-bottom: 0; }
-.vocab-jp-big { font-family: 'Noto Sans JP', sans-serif; font-size: 1.2rem; font-weight: 700; min-width: 60px; }
+.vocab-jp-big { font-family: 'Noto Sans JP', sans-serif; font-size: 1.4rem; font-weight: 700; min-width: 60px; }
 .vocab-meta { flex: 1; }
-.vocab-kana { font-size: 11px; color: var(--ink3); margin-bottom: 2px; }
-.vocab-zh { font-size: 13px; color: var(--ink2); }
+.vocab-kana { font-size: 13px; color: var(--ink3); margin-bottom: 2px; }
+.vocab-zh { font-size: 15px; color: var(--ink2); }
 .vocab-pos { font-size: 10px; padding: 1px 6px; border-radius: 99px; margin-left: 5px; background: var(--blue-bg); color: var(--blue-text); }
 .vocab-ex { font-size: 11px; color: var(--ink3); margin-top: 3px; }
 .speak-sm { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border2); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
@@ -109,13 +109,13 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 /* GRAMMAR */
 .grammar-card { background: white; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 var(--r2) var(--r2) 0; padding: 1.25rem; margin-bottom: 1rem; }
-.grammar-pattern { font-family: 'Noto Sans JP', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
-.grammar-explanation { font-size: 13px; color: var(--ink2); margin-bottom: 12px; line-height: 1.7; }
+.grammar-pattern { font-size: 1.1rem !important; font-family: 'Noto Sans JP', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.grammar-explanation { font-size: 15px; color: var(--ink2); margin-bottom: 12px; line-height: 1.7; }
 .grammar-ex-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); }
 .grammar-ex-row:last-of-type { border-bottom: none; }
 .ex-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; color: var(--ink); flex: 1; line-height: 1.7; }
 .ex-zh-small { font-size: 11px; color: var(--ink3); display: block; }
-.grammar-tip { font-size: 12px; color: var(--ink3); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); line-height: 1.6; }
+.grammar-tip { font-size: 14px; color: var(--ink3); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); line-height: 1.6; }
 
 /* PITCH */
 .pitch-item { margin-bottom: 14px; }
@@ -127,27 +127,27 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .mora-bar { width: 24px; height: 4px; border-radius: 2px; }
 .mora-bar.hi { background: var(--accent); }
 .mora-bar.lo { background: var(--border2); }
-.mora-char { font-family: 'Noto Sans JP', sans-serif; font-size: 14px; }
+.mora-char { font-family: 'Noto Sans JP', sans-serif; font-size: 16px; }
 .mora-conn { width: 4px; height: 4px; border-radius: 50%; margin-bottom: 20px; }
 .mora-conn.hi { background: var(--accent); }
 .mora-conn.lo { background: var(--border2); }
-.pitch-pattern { font-size: 11px; color: var(--ink3); }
+.pitch-pattern { font-size: 13px; color: var(--ink3); }
 
 /* QUIZ */
-.quiz-q { font-size: 15px; font-weight: 500; margin-bottom: 10px; line-height: 1.6; }
+.quiz-q { font-size: 17px; font-weight: 500; margin-bottom: 10px; line-height: 1.6; }
 .quiz-opts { display: grid; gap: 7px; margin-bottom: 8px; }
-.qopt { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 14px; cursor: pointer; font-size: 14px; color: var(--ink); text-align: left; font-family: inherit; transition: all 0.15s; }
+.qopt { font-size: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 14px; cursor: pointer; font-size: 14px; color: var(--ink); text-align: left; font-family: inherit; transition: all 0.15s; }
 .qopt:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
 .qopt.correct { background: var(--accent-bg); border-color: var(--accent); color: var(--accent-text); font-weight: 500; }
 .qopt.wrong { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
-.quiz-fb { font-size: 13px; padding: 9px 12px; border-radius: var(--r); line-height: 1.6; margin-top: 4px; }
+.quiz-fb { font-size: 15px; padding: 9px 12px; border-radius: var(--r); line-height: 1.6; margin-top: 4px; }
 .quiz-fb.ok { background: var(--accent-bg); color: var(--accent-text); }
 .quiz-fb.ng { background: var(--danger-bg); color: var(--danger); }
 
 /* SUMMARY */
 .summary-box { background: var(--ink); color: white; border-radius: var(--r2); padding: 1.25rem; text-align: center; margin-bottom: 1rem; }
 .summary-label { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; margin-bottom: 6px; }
-.summary-text { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.85); }
+.summary-text { font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.85); }
 
 /* FOOTER */
 
@@ -156,19 +156,19 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .poem-card::before { content:''; position:absolute; top:-20px; left:-20px; width:100px; height:100px; border-radius:50%; background:rgba(167,243,198,0.06); }
 .poem-card::after { content:''; position:absolute; bottom:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(167,243,198,0.04); }
 .poem-tag { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:0.12em; margin-bottom:12px; }
-.poem-jp { font-family:'Noto Sans JP',sans-serif; font-size:1.2rem; line-height:2; color:white; margin-bottom:6px; }
-.poem-yomi { font-family:'Noto Sans JP',sans-serif; font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:8px; }
-.poem-zh { font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+.poem-jp { font-family:'Noto Sans JP',sans-serif; font-size:1.4rem; line-height:2; color:white; margin-bottom:6px; }
+.poem-yomi { font-family:'Noto Sans JP',sans-serif; font-size:14px; color:rgba(255,255,255,0.4); margin-bottom:8px; }
+.poem-zh { font-size:15px; color:rgba(255,255,255,0.6); margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
 .poem-theme { display:inline-block; font-size:11px; padding:3px 10px; border-radius:99px; background:rgba(167,243,198,0.15); color:#a7f3c6; margin-bottom:12px; }
 .poem-vocab { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
 .poem-vocab-item { background:rgba(255,255,255,0.08); border-radius:var(--r); padding:6px 10px; text-align:center; }
-.poem-vocab-word { font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:500; }
-.poem-vocab-kana { font-size:10px; color:rgba(255,255,255,0.45); margin-top:1px; }
-.poem-vocab-mean { font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px; }
-.poem-note { font-size:12px; color:rgba(255,255,255,0.45); margin-top:10px; line-height:1.6; }
+.poem-vocab-word { font-family:'Noto Sans JP',sans-serif; font-size:16px; font-weight:500; }
+.poem-vocab-kana { font-size:12px; color:rgba(255,255,255,0.45); margin-top:1px; }
+.poem-vocab-mean { font-size:13px; color:rgba(255,255,255,0.6); margin-top:2px; }
+.poem-note { font-size:14px; color:rgba(255,255,255,0.45); margin-top:10px; line-height:1.6; }
 .poem-loading { text-align:center; padding:1.5rem; color:rgba(255,255,255,0.4); font-size:13px; }
 
-.footer { text-align: center; padding: 1rem 0; font-size: 12px; color: var(--ink3); }
+.footer { text-align: center; padding: 1rem 0; font-size: 14px; color: var(--ink3); }
 .nhk-link { color: var(--accent); text-decoration: none; font-weight: 500; }
 
 /* NOTIF BANNER */
@@ -179,7 +179,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo">日文學習：日文詞句賞析</div>
+  <div class="topbar-logo">毎日新聞</div>
   <div class="date-badge" id="today-date"></div>
   <button class="notif-btn-top" id="notif-top-btn" onclick="handleNotifBtn()">
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a5 5 0 0 0-5 5v2l-1.5 2h13L13 9V7a5 5 0 0 0-5-5z"/><path d="M6.5 13.5a1.5 1.5 0 0 0 3 0"/></svg>
@@ -191,7 +191,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <div id="notif-banner-wrap"></div>
   <div id="content">
     <div class="loading-wrap">
-      <div class="loading-jp">日文學習：日文詞句賞析</div>
+      <div class="loading-jp">毎日新聞</div>
       <div class="loading-sub">載入今日課程中…</div>
     </div>
   </div>
@@ -318,7 +318,7 @@ function renderLesson(d) {
   document.getElementById('content').innerHTML = `
     <div class="day-header">
       <div class="day-label">TODAY · NHK WEB EASY</div>
-      <div class="day-title">今日學習</div>
+      <div class="day-title">今日新聞學習</div>
     </div>
 
     <div class="news-card">
@@ -407,7 +407,7 @@ async function handleNotifBtn() {
   if (Notification.permission === 'granted') { scheduleDailyReminder(); return; }
   const perm = await Notification.requestPermission();
   if (perm === 'granted') {
-    new Notification('日文學習：日文詞句賞析· 通知已開啟！', { body: '每天早上 8:00 會提醒你學習今日日文 🎌' });
+    new Notification('毎日新聞 · 通知已開啟！', { body: '每天早上 8:00 會提醒你學習今日日文新聞 🎌' });
     scheduleDailyReminder();
   }
   updateNotifUI();
@@ -421,7 +421,7 @@ function scheduleDailyReminder() {
   const ms = target - now;
   setTimeout(() => {
     if (Notification.permission === 'granted') {
-      new Notification('📰 今日日文課程', { body: '早安！今天的學習已準備好，快來看看吧 🌅' });
+      new Notification('📰 今日日文新聞課程', { body: '早安！今天的新聞學習已準備好，快來看看吧 🌅' });
     }
     scheduleDailyReminder();
   }, ms);
