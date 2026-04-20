@@ -45,7 +45,7 @@ function generatePoem() {
 
     const postData = JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.8, maxOutputTokens: 2000 }
+      generationConfig: { temperature: 0.8, maxOutputTokens: 3000 }
     });
 
     const options = {
