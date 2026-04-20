@@ -150,6 +150,24 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .summary-text { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.85); }
 
 /* FOOTER */
+
+/* POEM SECTION */
+.poem-card { background: var(--ink); color: white; border-radius: var(--r2); padding: 1.5rem; margin-bottom: 1rem; text-align: center; position: relative; overflow: hidden; }
+.poem-card::before { content:''; position:absolute; top:-20px; left:-20px; width:100px; height:100px; border-radius:50%; background:rgba(167,243,198,0.06); }
+.poem-card::after { content:''; position:absolute; bottom:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(167,243,198,0.04); }
+.poem-tag { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:0.12em; margin-bottom:12px; }
+.poem-jp { font-family:'Noto Sans JP',sans-serif; font-size:1.2rem; line-height:2; color:white; margin-bottom:6px; }
+.poem-yomi { font-family:'Noto Sans JP',sans-serif; font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:8px; }
+.poem-zh { font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+.poem-theme { display:inline-block; font-size:11px; padding:3px 10px; border-radius:99px; background:rgba(167,243,198,0.15); color:#a7f3c6; margin-bottom:12px; }
+.poem-vocab { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+.poem-vocab-item { background:rgba(255,255,255,0.08); border-radius:var(--r); padding:6px 10px; text-align:center; }
+.poem-vocab-word { font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:500; }
+.poem-vocab-kana { font-size:10px; color:rgba(255,255,255,0.45); margin-top:1px; }
+.poem-vocab-mean { font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px; }
+.poem-note { font-size:12px; color:rgba(255,255,255,0.45); margin-top:10px; line-height:1.6; }
+.poem-loading { text-align:center; padding:1.5rem; color:rgba(255,255,255,0.4); font-size:13px; }
+
 .footer { text-align: center; padding: 1rem 0; font-size: 12px; color: var(--ink3); }
 .nhk-link { color: var(--accent); text-decoration: none; font-weight: 500; }
 
@@ -339,6 +357,10 @@ function renderLesson(d) {
       <div class="summary-text">${d.summary||''}</div>
     </div>
 
+
+    <div class="section-badge" style="background:#1a1a2e;color:#a7f3c6;">🌸 今日美句</div>
+    <div id="poem-wrap"><div class="poem-loading" style="background:var(--ink);border-radius:var(--r2);padding:1.5rem;color:rgba(255,255,255,0.4);text-align:center;">載入今日美句中…</div></div>
+
     <div class="footer">
       資料來源：<a class="nhk-link" href="https://www3.nhk.or.jp/news/easy/" target="_blank">NHK Web Easy</a>
       　·　每天早上 8:00 自動更新
@@ -409,6 +431,46 @@ function scheduleDailyReminder() {
 initTTS();
 updateNotifUI();
 loadTodayLesson();
+loadTodayPoem();
+// ── LOAD TODAY-POEM.JSON ─────────────────────────────────────
+async function loadTodayPoem() {
+  const wrap = document.getElementById('poem-wrap');
+  if (!wrap) return;
+  try {
+    const res = await fetch('today-poem.json?t=' + Date.now());
+    if (!res.ok) throw new Error('today-poem.json not found');
+    const poem = await res.json();
+    renderPoem(poem);
+  } catch(e) {
+    wrap.innerHTML = '<div class="poem-loading">下午3點美句尚未更新，請稍後再試。</div>';
+  }
+}
+
+function renderPoem(p) {
+  const wrap = document.getElementById('poem-wrap');
+  if (!wrap) return;
+  const vocabHtml = (p.vocab||[]).map(v => `
+    <div class="poem-vocab-item">
+      <div class="poem-vocab-word">${v.word}</div>
+      <div class="poem-vocab-kana">${v.kana}</div>
+      <div class="poem-vocab-mean">${v.meaning}</div>
+    </div>`).join('');
+  wrap.innerHTML = `
+    <div class="poem-card">
+      <div class="poem-tag">🌸 今日美句 · 下午3點推播</div>
+      <div class="poem-theme">${p.theme||''}</div>
+      <div class="poem-jp">${p.jp}</div>
+      <div class="poem-yomi">${p.yomi||''}</div>
+      <div class="poem-zh">${p.zh}</div>
+      <button class="speak-btn" style="margin:0 auto 14px;" onclick="speakJP('${(p.jp||'').replace(/'/g,"\'")}',this)">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6H1v4h2l4 3V3L3 6z" stroke-linejoin="round"/><path d="M11 5.5a3.5 3.5 0 0 1 0 5" stroke-linecap="round"/><path d="M13 3.5a6 6 0 0 1 0 9" stroke-linecap="round"/></svg>
+        點擊聆聽
+      </button>
+      <div class="poem-vocab">${vocabHtml}</div>
+      <div class="poem-note">💡 ${p.note||''}</div>
+    </div>`;
+}
+
 
 document.getElementById('today-date').textContent =
   new Date().toLocaleDateString('zh-TW', {month:'long', day:'numeric', weekday:'short'});

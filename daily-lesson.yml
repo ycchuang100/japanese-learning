@@ -1,33 +1,45 @@
-# 毎日新聞 · 日文學習 App
+name: 每日日文新聞學習更新
 
-每天自動從 NHK Web Easy 抓取新聞，用 Gemini AI 分析單字、文法、發音，並推播通知到手機。
+on:
+  schedule:
+    # 每天台灣時間早上 8:00 執行（UTC 00:00）
+    - cron: '0 0 * * *'
+    # 每天台灣時間下午 3:00 執行（UTC 07:00）
+    - cron: '0 7 * * *'
+  workflow_dispatch:
 
-## 檔案說明
-- `index.html` — 學習 App 主頁面（部署到 Netlify）
-- `fetch-and-analyze.js` — 每日自動執行的分析腳本
-- `today.json` — 每天自動產生的學習內容（由 GitHub Actions 更新）
-- `.github/workflows/daily-lesson.yml` — 每天早上8點自動執行的排程
+permissions:
+  contents: write
 
-## 設定步驟
+jobs:
+  update-daily-lesson:
+    runs-on: ubuntu-latest
 
-### 1. 建立 GitHub Repository
-1. 前往 github.com，登入後點「New repository」
-2. 名稱輸入 `japanese-learning`，選 Public，點「Create repository」
-3. 把這個資料夾的所有檔案上傳上去
+    steps:
+      - name: 取得程式碼
+        uses: actions/checkout@v4
 
-### 2. 設定 GitHub Secrets
-1. 在 GitHub repo 頁面點「Settings」→「Secrets and variables」→「Actions」
-2. 點「New repository secret」
-3. 新增：Name = `GEMINI_API_KEY`，Value = 你的 Gemini API Key
+      - name: 設定 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-### 3. 連結 Netlify
-1. 在 Netlify 點「Add new project」→「Import an existing project」
-2. 選「GitHub」→ 選 `japanese-learning` repo
-3. Build command 留空，Publish directory 輸入 `.`
-4. 點「Deploy」
+      - name: 早上8點 — 執行新聞分析
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && contains(github.event.schedule, '0 0'))
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node fetch-and-analyze.js
 
-### 4. 完成！
-- 每天早上8點 GitHub Actions 自動執行
-- 更新 today.json 到 GitHub
-- Netlify 偵測到更新自動重新部署
-- 手機收到推播通知
+      - name: 下午3點 — 執行美句生成
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && contains(github.event.schedule, '0 7'))
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node daily-poem.js
+
+      - name: 提交並推送更新
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'bot@github.com'
+          git add today.json today-poem.json 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "每日更新：$(date +'%Y-%m-%d %H:%M') 日文學習內容"
+          git push
