@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   update-daily-lesson:
+    runs-on: ubuntu-latest
     
     steps:
       - name: 取得程式碼
