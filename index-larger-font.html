@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>毎日新聞 · 日文學習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCXNWXW4y3Y5Ium3MMe-hgao8uvJLQXYbE",
+    authDomain: "japanese-learning-49e63.firebaseapp.com",
+    projectId: "japanese-learning-49e63",
+    storageBucket: "japanese-learning-49e63.firebasestorage.app",
+    messagingSenderId: "94858113444",
+    appId: "1:94858113444:web:a9039f872784d1dd47d131"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window._fbApp = app;
+
+  // FCM 推播
+  try {
+    const messaging = getMessaging(app);
+    window._messaging = messaging;
+    window._getToken = getToken;
+    window._onMessage = onMessage;
+  } catch(e) {
+    console.log('FCM not available:', e.message);
+  }
+
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<style>
+:root {
+  --ink: #1a1a2e; --ink2: #3d3d5c; --ink3: #7a7a9a;
+  --paper: #fafaf7; --surface: #f2f2ed;
+  --border: rgba(26,26,46,0.1); --border2: rgba(26,26,46,0.18);
+  --accent: #2d6a4f; --accent2: #40916c;
+  --accent-bg: #d8f3dc; --accent-text: #1b4332;
+  --danger: #c1121f; --danger-bg: #fde8ea;
+  --blue: #1d4e89; --blue-bg: #dbeafe; --blue-text: #1e3a5f;
+  --amber-bg: #fff3cd; --amber-text: #856404;
+  --r: 10px; --r2: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 17px; line-height: 1.6; }
+
+/* TOP BAR */
+.topbar { background: var(--ink); color: white; display: flex; align-items: center; gap: 10px; padding: 0 1rem; height: 52px; position: sticky; top: 0; z-index: 100; }
+.topbar-logo { font-family: 'Noto Sans JP', sans-serif; font-size: 1.1rem; font-weight: 700; color: #a7f3c6; flex: 1; }
+.date-badge { font-size: 11px; color: rgba(255,255,255,0.5); }
+.notif-btn-top { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 99px; padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 5px; transition: background 0.2s; }
+.notif-btn-top:hover { background: rgba(255,255,255,0.2); }
+.notif-btn-top.on { background: rgba(167,243,198,0.2); border-color: #a7f3c6; color: #a7f3c6; }
+
+/* MAIN */
+.main { max-width: 640px; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
+
+/* LOADING */
+.loading-wrap { text-align: center; padding: 3rem 1rem; }
+.loading-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 2rem; color: var(--accent); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.loading-sub { font-size: 13px; color: var(--ink3); margin-top: 8px; }
+
+/* ERROR */
+.error-wrap { background: var(--danger-bg); border: 1px solid var(--danger); border-radius: var(--r2); padding: 1.25rem; text-align: center; }
+
+/* DATE HEADER */
+.day-header { margin-bottom: 1.25rem; }
+.day-label { font-size: 11px; color: var(--ink3); letter-spacing: 0.1em; margin-bottom: 4px; }
+.day-title { font-size: 1.3rem; font-weight: 700; }
+
+/* NEWS CARD */
+.news-card { background: var(--ink); color: white; border-radius: var(--r2); padding: 1.5rem; margin-bottom: 1rem; position: relative; overflow: hidden; }
+.news-card::before { content:''; position:absolute; top:-40px; right:-40px; width:150px; height:150px; border-radius:50%; background:rgba(167,243,198,0.06); }
+.news-tag { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; margin-bottom: 8px; }
+.news-jp { font-size: 1.3rem !important; font-family: 'Noto Sans JP', sans-serif; font-size: 1.15rem; line-height: 1.9; margin-bottom: 6px; }
+.news-yomi { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 4px; font-family: 'Noto Sans JP', sans-serif; }
+.news-zh { font-size: 13px; color: rgba(255,255,255,0.55); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; margin-top: 6px; }
+.speak-btn { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 99px; padding: 6px 14px; font-size: 12px; font-family: inherit; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+.speak-btn:hover { background: rgba(255,255,255,0.18); }
+.speak-btn.playing { background: rgba(167,243,198,0.2); border-color: #a7f3c6; }
+
+/* SECTION */
+.section-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 99px; margin-bottom: 10px; }
+.card { background: white; border: 1px solid var(--border); border-radius: var(--r2); padding: 1.25rem; margin-bottom: 1rem; }
+
+/* VOCAB */
+.vocab-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.vocab-item:last-child { border-bottom: none; padding-bottom: 0; }
+.vocab-jp-big { font-family: 'Noto Sans JP', sans-serif; font-size: 1.4rem; font-weight: 700; min-width: 60px; }
+.vocab-meta { flex: 1; }
+.vocab-kana { font-size: 13px; color: var(--ink3); margin-bottom: 2px; }
+.vocab-zh { font-size: 15px; color: var(--ink2); }
+.vocab-pos { font-size: 10px; padding: 1px 6px; border-radius: 99px; margin-left: 5px; background: var(--blue-bg); color: var(--blue-text); }
+.vocab-ex { font-size: 11px; color: var(--ink3); margin-top: 3px; }
+.speak-sm { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border2); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.speak-sm:hover { border-color: var(--accent); background: var(--accent-bg); }
+.speak-sm.playing { background: var(--accent-bg); border-color: var(--accent); }
+.speak-sm svg { width: 13px; height: 13px; stroke: var(--ink2); }
+.speak-sm.playing svg { stroke: var(--accent); }
+
+/* GRAMMAR */
+.grammar-card { background: white; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 var(--r2) var(--r2) 0; padding: 1.25rem; margin-bottom: 1rem; }
+.grammar-pattern { font-size: 1.1rem !important; font-family: 'Noto Sans JP', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.grammar-explanation { font-size: 15px; color: var(--ink2); margin-bottom: 12px; line-height: 1.7; }
+.grammar-ex-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.grammar-ex-row:last-of-type { border-bottom: none; }
+.ex-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; color: var(--ink); flex: 1; line-height: 1.7; }
+.ex-zh-small { font-size: 11px; color: var(--ink3); display: block; }
+.grammar-tip { font-size: 14px; color: var(--ink3); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); line-height: 1.6; }
+
+/* PITCH */
+.pitch-item { margin-bottom: 14px; }
+.pitch-item:last-child { margin-bottom: 0; }
+.pitch-word-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.pitch-word-label { font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 600; }
+.pitch-morae { display: flex; align-items: flex-end; gap: 1px; margin-bottom: 4px; }
+.mora-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.mora-bar { width: 24px; height: 4px; border-radius: 2px; }
+.mora-bar.hi { background: var(--accent); }
+.mora-bar.lo { background: var(--border2); }
+.mora-char { font-family: 'Noto Sans JP', sans-serif; font-size: 16px; }
+.mora-conn { width: 4px; height: 4px; border-radius: 50%; margin-bottom: 20px; }
+.mora-conn.hi { background: var(--accent); }
+.mora-conn.lo { background: var(--border2); }
+.pitch-pattern { font-size: 13px; color: var(--ink3); }
+
+/* QUIZ */
+.quiz-q { font-size: 17px; font-weight: 500; margin-bottom: 10px; line-height: 1.6; }
+.quiz-opts { display: grid; gap: 7px; margin-bottom: 8px; }
+.qopt { font-size: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 14px; cursor: pointer; font-size: 14px; color: var(--ink); text-align: left; font-family: inherit; transition: all 0.15s; }
+.qopt:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
+.qopt.correct { background: var(--accent-bg); border-color: var(--accent); color: var(--accent-text); font-weight: 500; }
+.qopt.wrong { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+.quiz-fb { font-size: 15px; padding: 9px 12px; border-radius: var(--r); line-height: 1.6; margin-top: 4px; }
+.quiz-fb.ok { background: var(--accent-bg); color: var(--accent-text); }
+.quiz-fb.ng { background: var(--danger-bg); color: var(--danger); }
+
+/* SUMMARY */
+.summary-box { background: var(--ink); color: white; border-radius: var(--r2); padding: 1.25rem; text-align: center; margin-bottom: 1rem; }
+.summary-label { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; margin-bottom: 6px; }
+.summary-text { font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.85); }
+
+/* FOOTER */
+
+/* POEM SECTION */
+.poem-card { background: var(--ink); color: white; border-radius: var(--r2); padding: 1.5rem; margin-bottom: 1rem; text-align: center; position: relative; overflow: hidden; }
+.poem-card::before { content:''; position:absolute; top:-20px; left:-20px; width:100px; height:100px; border-radius:50%; background:rgba(167,243,198,0.06); }
+.poem-card::after { content:''; position:absolute; bottom:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(167,243,198,0.04); }
+.poem-tag { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:0.12em; margin-bottom:12px; }
+.poem-jp { font-family:'Noto Sans JP',sans-serif; font-size:1.4rem; line-height:2; color:white; margin-bottom:6px; }
+.poem-yomi { font-family:'Noto Sans JP',sans-serif; font-size:14px; color:rgba(255,255,255,0.4); margin-bottom:8px; }
+.poem-zh { font-size:15px; color:rgba(255,255,255,0.6); margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+.poem-theme { display:inline-block; font-size:11px; padding:3px 10px; border-radius:99px; background:rgba(167,243,198,0.15); color:#a7f3c6; margin-bottom:12px; }
+.poem-vocab { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+.poem-vocab-item { background:rgba(255,255,255,0.08); border-radius:var(--r); padding:6px 10px; text-align:center; }
+.poem-vocab-word { font-family:'Noto Sans JP',sans-serif; font-size:16px; font-weight:500; }
+.poem-vocab-kana { font-size:12px; color:rgba(255,255,255,0.45); margin-top:1px; }
+.poem-vocab-mean { font-size:13px; color:rgba(255,255,255,0.6); margin-top:2px; }
+.poem-note { font-size:14px; color:rgba(255,255,255,0.45); margin-top:10px; line-height:1.6; }
+.poem-loading { text-align:center; padding:1.5rem; color:rgba(255,255,255,0.4); font-size:13px; }
+
+.footer { text-align: center; padding: 1rem 0; font-size: 14px; color: var(--ink3); }
+.nhk-link { color: var(--accent); text-decoration: none; font-weight: 500; }
+
+/* NOTIF BANNER */
+.notif-banner { background: var(--amber-bg); border: 1px solid #ffc107; border-radius: var(--r); padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: var(--amber-text); display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.notif-allow-btn { background: var(--amber-text); color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">毎日新聞</div>
+  <div class="date-badge" id="today-date"></div>
+  <button class="notif-btn-top" id="notif-top-btn" onclick="handleNotifBtn()">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a5 5 0 0 0-5 5v2l-1.5 2h13L13 9V7a5 5 0 0 0-5-5z"/><path d="M6.5 13.5a1.5 1.5 0 0 0 3 0"/></svg>
+    <span id="notif-btn-label">開啟通知</span>
+  </button>
+</div>
+
+<div class="main">
+  <div id="notif-banner-wrap"></div>
+  <div id="content">
+    <div class="loading-wrap">
+      <div class="loading-jp">毎日新聞</div>
+      <div class="loading-sub">載入今日課程中…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let ttsVoice = null;
+let currentUtter = null;
+let playingBtn = null;
+const quizState = {};
+
+// ── TTS ──────────────────────────────────────────────────────
+function initTTS() {
+  if (!window.speechSynthesis) return;
+  function find() {
+    const v = speechSynthesis.getVoices();
+    ttsVoice = v.find(x => x.lang==='ja-JP') || v.find(x => x.lang.startsWith('ja')) || null;
+  }
+  find();
+  speechSynthesis.addEventListener('voiceschanged', find);
+}
+
+function speakJP(text, btn) {
+  if (!ttsVoice) return;
+  if (currentUtter) {
+    speechSynthesis.cancel();
+    if (playingBtn) playingBtn.classList.remove('playing');
+    if (playingBtn === btn) { currentUtter=null; playingBtn=null; return; }
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  u.voice = ttsVoice; u.lang='ja-JP'; u.rate=0.85;
+  currentUtter=u; playingBtn=btn;
+  if(btn) btn.classList.add('playing');
+  u.onend=u.onerror=()=>{ if(btn) btn.classList.remove('playing'); currentUtter=null; playingBtn=null; };
+  speechSynthesis.speak(u);
+}
+
+function mkSpeakSm(text) {
+  const e = text.replace(/'/g,"\\'");
+  return `<button class="speak-sm" onclick="speakJP('${e}',this)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6H1v4h2l4 3V3L3 6z" stroke-linejoin="round"/><path d="M11 5.5a3.5 3.5 0 0 1 0 5" stroke-linecap="round"/></svg></button>`;
+}
+
+// ── LOAD TODAY.JSON ───────────────────────────────────────────
+async function loadTodayLesson() {
+  try {
+    const res = await fetch('today.json?t=' + Date.now());
+    if (!res.ok) throw new Error('today.json not found');
+    const lesson = await res.json();
+    renderLesson(lesson);
+  } catch(e) {
+    document.getElementById('content').innerHTML = `
+      <div class="error-wrap">
+        <div style="font-size:1.2rem;margin-bottom:8px;">今日課程準備中</div>
+        <div style="font-size:13px;color:var(--danger);">每天早上8點自動更新，請稍後再試。</div>
+        <div style="font-size:11px;color:#999;margin-top:6px;">${e.message}</div>
+      </div>`;
+  }
+}
+
+// ── RENDER LESSON ─────────────────────────────────────────────
+function renderLesson(d) {
+  const date = new Date(d.date || Date.now());
+  document.getElementById('today-date').textContent =
+    date.toLocaleDateString('zh-TW', {month:'long', day:'numeric', weekday:'short'});
+
+  // Vocab
+  const vocabHtml = (d.vocab||[]).map(v => `
+    <div class="vocab-item">
+      <div class="vocab-jp-big">${v.jp}</div>
+      <div class="vocab-meta">
+        <div class="vocab-kana">${v.kana}<span class="vocab-pos">${v.pos}</span></div>
+        <div class="vocab-zh">${v.zh}</div>
+        ${v.example ? `<div class="vocab-ex">${v.example}　${v.exampleZh||''}</div>` : ''}
+      </div>
+      ${mkSpeakSm(v.kana)}
+    </div>`).join('');
+
+  // Grammar examples
+  const grammarExHtml = (d.grammar?.examples||[]).map(e => `
+    <div class="grammar-ex-row">
+      <div class="ex-jp">${e.jp}<span class="ex-zh-small">${e.zh}</span></div>
+      ${mkSpeakSm(e.jp)}
+    </div>`).join('');
+
+  // Pitch
+  const pitchHtml = (d.pitch||[]).map(p => {
+    const morae = p.morae || [];
+    const highs = p.highs || [];
+    const moraHtml = morae.map((m,i) => {
+      const h = highs[i];
+      const nxt = highs[i+1];
+      const conn = i < morae.length-1
+        ? `<div class="mora-conn ${(h&&nxt)?'hi':'lo'}"></div>` : '';
+      return `<div class="mora-col">
+        <div class="mora-bar ${h?'hi':'lo'}" style="align-self:${h?'flex-end':'flex-start'};margin-${h?'top':'bottom'}:16px;"></div>
+        <div class="mora-char">${m}</div>
+      </div>${conn}`;
+    }).join('');
+    return `<div class="pitch-item">
+      <div class="pitch-word-row">
+        <span class="pitch-word-label">${p.word}</span>
+        ${mkSpeakSm(p.kana||p.word)}
+      </div>
+      <div class="pitch-morae">${moraHtml}</div>
+      <div class="pitch-pattern">${p.pattern}</div>
+    </div>`;
+  }).join('');
+
+  // Quiz
+  const quizHtml = (d.quiz||[]).map((q,qi) => {
+    const s = quizState[qi];
+    const opts = q.opts.map((o,oi) => {
+      let cls = 'qopt';
+      if (s!==undefined) cls += oi===q.ans?' correct':(oi===s?' wrong':'');
+      return `<button class="${cls}" onclick="answerQ(${qi},${oi},${q.ans},'${(q.fb||'').replace(/'/g,"\\'")}',${d.quiz.length})" ${s!==undefined?'disabled':''}>${o}</button>`;
+    }).join('');
+    const fb = s!==undefined ? `<div class="quiz-fb ${s===q.ans?'ok':'ng'}">${s===q.ans?'✓ 正確！':'✗ 答錯了。'}${q.fb}</div>` : '';
+    return `<div style="margin-bottom:1.25rem;">
+      <div class="quiz-q">Q${qi+1}. ${q.q}</div>
+      <div class="quiz-opts">${opts}</div>${fb}
+    </div>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="day-header">
+      <div class="day-label">TODAY · NHK WEB EASY</div>
+      <div class="day-title">今日新聞學習</div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-tag">📰 TODAY'S NEWS</div>
+      <div class="news-jp">${d.title}</div>
+      <div class="news-yomi">${d.titleYomi||''}</div>
+      <div class="news-zh">${d.titleZh||''}</div>
+      <button class="speak-btn" onclick="speakJP('${(d.title||'').replace(/'/g,"\\'")}',this)">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6H1v4h2l4 3V3L3 6z" stroke-linejoin="round"/><path d="M11 5.5a3.5 3.5 0 0 1 0 5" stroke-linecap="round"/><path d="M13 3.5a6 6 0 0 1 0 9" stroke-linecap="round"/></svg>
+        點擊聆聽
+      </button>
+    </div>
+
+    <div class="section-badge" style="background:var(--blue-bg);color:var(--blue-text);">📝 單字學習</div>
+    <div class="card">${vocabHtml}</div>
+
+    <div class="section-badge" style="background:var(--accent-bg);color:var(--accent-text);">🔷 文法聚焦</div>
+    <div class="grammar-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <div class="grammar-pattern">${d.grammar?.pattern||''}</div>
+        ${mkSpeakSm(d.grammar?.pattern||'')}
+      </div>
+      <div class="grammar-explanation">${d.grammar?.explanation||''}</div>
+      ${grammarExHtml}
+      <div class="grammar-tip">💡 ${d.grammar?.tip||''}</div>
+    </div>
+
+    <div class="section-badge" style="background:var(--amber-bg);color:var(--amber-text);">🎵 發音練習</div>
+    <div class="card">${pitchHtml}</div>
+
+    <div class="section-badge" style="background:var(--danger-bg);color:var(--danger);">✅ 小測驗</div>
+    <div class="card" id="quiz-card">${quizHtml}</div>
+
+    <div class="summary-box">
+      <div class="summary-label">TODAY'S KEY POINT</div>
+      <div class="summary-text">${d.summary||''}</div>
+    </div>
+
+
+    <div class="section-badge" style="background:#1a1a2e;color:#a7f3c6;">🌸 今日美句</div>
+    <div id="poem-wrap"><div class="poem-loading" style="background:var(--ink);border-radius:var(--r2);padding:1.5rem;color:rgba(255,255,255,0.4);text-align:center;">載入今日美句中…</div></div>
+
+    <div class="footer">
+      資料來源：<a class="nhk-link" href="https://www3.nhk.or.jp/news/easy/" target="_blank">NHK Web Easy</a>
+      　·　每天早上 8:00 自動更新
+    </div>`;
+}
+
+function answerQ(qi, chosen, correct, fb, total) {
+  quizState[qi] = chosen;
+  document.querySelectorAll(`#quiz-card .quiz-opts`)[qi]?.querySelectorAll('.qopt').forEach((b,i) => {
+    b.disabled = true;
+    if(i===correct) b.classList.add('correct');
+    else if(i===chosen) b.classList.add('wrong');
+  });
+  const fbDiv = document.createElement('div');
+  fbDiv.className = `quiz-fb ${chosen===correct?'ok':'ng'}`;
+  fbDiv.textContent = (chosen===correct?'✓ 正確！':'✗ 答錯了。') + fb;
+  document.querySelectorAll(`#quiz-card .quiz-opts`)[qi]?.after(fbDiv);
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────
+function updateNotifUI() {
+  const perm = 'Notification' in window ? Notification.permission : 'unsupported';
+  const btn = document.getElementById('notif-top-btn');
+  const label = document.getElementById('notif-btn-label');
+  if (perm === 'granted') {
+    btn.classList.add('on');
+    label.textContent = '通知已開啟';
+    document.getElementById('notif-banner-wrap').innerHTML = '';
+  } else if (perm === 'default') {
+    btn.classList.remove('on');
+    label.textContent = '開啟通知';
+    document.getElementById('notif-banner-wrap').innerHTML = `
+      <div class="notif-banner">
+        <span>開啟推播通知，每天早上8點提醒你學習！</span>
+        <button class="notif-allow-btn" onclick="handleNotifBtn()">立即開啟</button>
+      </div>`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+async function handleNotifBtn() {
+  if (!('Notification' in window)) { alert('你的瀏覽器不支援推播通知，建議使用 Chrome'); return; }
+  if (Notification.permission === 'granted') { scheduleDailyReminder(); return; }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    new Notification('毎日新聞 · 通知已開啟！', { body: '每天早上 8:00 會提醒你學習今日日文新聞 🎌' });
+    scheduleDailyReminder();
+  }
+  updateNotifUI();
+}
+
+function scheduleDailyReminder() {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(8, 0, 0, 0);
+  if (now >= target) target.setDate(target.getDate()+1);
+  const ms = target - now;
+  setTimeout(() => {
+    if (Notification.permission === 'granted') {
+      new Notification('📰 今日日文新聞課程', { body: '早安！今天的新聞學習已準備好，快來看看吧 🌅' });
+    }
+    scheduleDailyReminder();
+  }, ms);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+initTTS();
+updateNotifUI();
+loadTodayLesson();
+loadTodayPoem();
+// ── LOAD TODAY-POEM.JSON ─────────────────────────────────────
+async function loadTodayPoem() {
+  const wrap = document.getElementById('poem-wrap');
+  if (!wrap) return;
+  try {
+    const res = await fetch('today-poem.json?t=' + Date.now());
+    if (!res.ok) throw new Error('today-poem.json not found');
+    const poem = await res.json();
+    renderPoem(poem);
+  } catch(e) {
+    wrap.innerHTML = '<div class="poem-loading">下午3點美句尚未更新，請稍後再試。</div>';
+  }
+}
+
+function renderPoem(p) {
+  const wrap = document.getElementById('poem-wrap');
+  if (!wrap) return;
+  const vocabHtml = (p.vocab||[]).map(v => `
+    <div class="poem-vocab-item">
+      <div class="poem-vocab-word">${v.word}</div>
+      <div class="poem-vocab-kana">${v.kana}</div>
+      <div class="poem-vocab-mean">${v.meaning}</div>
+    </div>`).join('');
+  wrap.innerHTML = `
+    <div class="poem-card">
+      <div class="poem-tag">🌸 今日美句 · 下午3點推播</div>
+      <div class="poem-theme">${p.theme||''}</div>
+      <div class="poem-jp">${p.jp}</div>
+      <div class="poem-yomi">${p.yomi||''}</div>
+      <div class="poem-zh">${p.zh}</div>
+      <button class="speak-btn" style="margin:0 auto 14px;" onclick="speakJP('${(p.jp||'').replace(/'/g,"\'")}',this)">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6H1v4h2l4 3V3L3 6z" stroke-linejoin="round"/><path d="M11 5.5a3.5 3.5 0 0 1 0 5" stroke-linecap="round"/><path d="M13 3.5a6 6 0 0 1 0 9" stroke-linecap="round"/></svg>
+        點擊聆聽
+      </button>
+      <div class="poem-vocab">${vocabHtml}</div>
+      <div class="poem-note">💡 ${p.note||''}</div>
+    </div>`;
+}
+
+
+document.getElementById('today-date').textContent =
+  new Date().toLocaleDateString('zh-TW', {month:'long', day:'numeric', weekday:'short'});
+</script>
+</body>
+</html>
