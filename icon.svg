@@ -1,14 +1,117 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+
+  <!-- Soft gradient background -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef0f5"/>
+      <stop offset="50%" stop-color="#fdf6e8"/>
+      <stop offset="100%" stop-color="#eef8f2"/>
+    </linearGradient>
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8a0b8"/>
+      <stop offset="50%" stop-color="#5a9a7a"/>
+      <stop offset="100%" stop-color="#7aabcc"/>
+    </linearGradient>
+  </defs>
+
   <!-- Background -->
-  <rect width="512" height="512" rx="112" fill="#1a1a2e"/>
-  <!-- Subtle circle decoration -->
-  <circle cx="380" cy="140" r="120" fill="none" stroke="#2d6a4f" stroke-width="2" opacity="0.4"/>
-  <circle cx="380" cy="140" r="80" fill="none" stroke="#2d6a4f" stroke-width="1.5" opacity="0.25"/>
-  <!-- 文 character - main visual -->
-  <text x="256" y="310" font-family="serif" font-size="260" font-weight="700" text-anchor="middle" fill="#a7f3c6">文</text>
-  <!-- Bottom accent line -->
-  <rect x="140" y="390" width="232" height="3" rx="1.5" fill="#2d6a4f" opacity="0.8"/>
-  <!-- Small dot decorations -->
-  <circle cx="140" cy="391" r="5" fill="#a7f3c6" opacity="0.7"/>
-  <circle cx="372" cy="391" r="5" fill="#a7f3c6" opacity="0.7"/>
+  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
+
+  <!-- Subtle inner glow rings -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#f9d0e0" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="256" cy="256" r="175" fill="none" stroke="#d4eedf" stroke-width="1" opacity="0.4"/>
+
+  <!-- Background blush spots for warmth -->
+  <circle cx="380" cy="140" r="90" fill="#fde8f0" opacity="0.45"/>
+  <circle cx="130" cy="370" r="75" fill="#e6f5ec" opacity="0.4"/>
+  <circle cx="100" cy="130" r="55" fill="#fef3d0" opacity="0.35"/>
+  <circle cx="400" cy="390" r="60" fill="#e8f0fc" opacity="0.4"/>
+
+  <!-- Border -->
+  <rect x="50" y="50" width="412" height="412" rx="78" fill="none" stroke="url(#borderGrad)" stroke-width="18"/>
+
+  <!-- ── CHERRY BLOSSOM top-right ── -->
+  <g transform="translate(388,108)">
+    <ellipse cx="0" cy="-28" rx="20" ry="11" fill="#f9b8ce" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-28" rx="20" ry="11" fill="#f9b8ce" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-28" rx="20" ry="11" fill="#fcd0df" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-28" rx="20" ry="11" fill="#f9b8ce" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-28" rx="20" ry="11" fill="#fcd0df" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="9" fill="#f06090"/>
+    <circle cx="0" cy="-9" r="2.8" fill="#c03060"/>
+    <circle cx="8.5" cy="-3" r="2.8" fill="#c03060"/>
+    <circle cx="5.3" cy="7.5" r="2.8" fill="#c03060"/>
+    <circle cx="-5.3" cy="7.5" r="2.8" fill="#c03060"/>
+    <circle cx="-8.5" cy="-3" r="2.8" fill="#c03060"/>
+  </g>
+
+  <!-- ── CHERRY BLOSSOM bottom-left ── -->
+  <g transform="translate(118,400)">
+    <ellipse cx="0" cy="-22" rx="16" ry="9" fill="#fcd0df" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-22" rx="16" ry="9" fill="#f9b8ce" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-22" rx="16" ry="9" fill="#fcd0df" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-22" rx="16" ry="9" fill="#f9b8ce" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-22" rx="16" ry="9" fill="#fcd0df" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="7" fill="#f06090"/>
+    <circle cx="0" cy="-7" r="2.2" fill="#c03060"/>
+    <circle cx="6.6" cy="-2.2" r="2.2" fill="#c03060"/>
+    <circle cx="4.1" cy="5.8" r="2.2" fill="#c03060"/>
+    <circle cx="-4.1" cy="5.8" r="2.2" fill="#c03060"/>
+    <circle cx="-6.6" cy="-2.2" r="2.2" fill="#c03060"/>
+  </g>
+
+  <!-- ── SMALL BLOSSOM top-left ── -->
+  <g transform="translate(118,105)" opacity="0.75">
+    <ellipse cx="0" cy="-16" rx="12" ry="7" fill="#fcd0df" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-16" rx="12" ry="7" fill="#f9b8ce" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-16" rx="12" ry="7" fill="#fcd0df" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-16" rx="12" ry="7" fill="#f9b8ce" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-16" rx="12" ry="7" fill="#fcd0df" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="5" fill="#f06090"/>
+  </g>
+
+  <!-- Floating petals scattered -->
+  <ellipse cx="172" cy="78" rx="11" ry="6" fill="#f9b8ce" opacity="0.7" transform="rotate(30 172 78)"/>
+  <ellipse cx="75" cy="210" rx="9" ry="5" fill="#fcd0df" opacity="0.6" transform="rotate(50 75 210)"/>
+  <ellipse cx="448" cy="175" rx="9" ry="5" fill="#f9b8ce" opacity="0.55" transform="rotate(-25 448 175)"/>
+  <ellipse cx="445" cy="320" rx="8" ry="5" fill="#fcd0df" opacity="0.55" transform="rotate(-40 445 320)"/>
+  <ellipse cx="210" cy="450" rx="9" ry="5" fill="#f9b8ce" opacity="0.6" transform="rotate(15 210 450)"/>
+  <ellipse cx="348" cy="455" rx="8" ry="4.5" fill="#fcd0df" opacity="0.5" transform="rotate(-18 348 455)"/>
+  <ellipse cx="68" cy="320" rx="7" ry="4" fill="#f9b8ce" opacity="0.5" transform="rotate(60 68 320)"/>
+  <ellipse cx="420" cy="68" rx="7" ry="4" fill="#fcd0df" opacity="0.55" transform="rotate(-50 420 68)"/>
+
+  <!-- Decorative coloured dots -->
+  <!-- Sky blue -->
+  <circle cx="428" cy="235" r="26" fill="#85bfe0" opacity="0.78"/>
+  <circle cx="428" cy="235" r="17" fill="#a8d4ee" opacity="0.5"/>
+  <!-- Mint green -->
+  <circle cx="82" cy="300" r="20" fill="#6ec49a" opacity="0.72"/>
+  <circle cx="82" cy="300" r="12" fill="#9edabb" opacity="0.5"/>
+  <!-- Warm yellow -->
+  <circle cx="88" cy="155" r="15" fill="#f5c842" opacity="0.65"/>
+  <circle cx="88" cy="155" r="9" fill="#fad96a" opacity="0.5"/>
+  <!-- Lavender -->
+  <circle cx="432" cy="388" r="16" fill="#b89ee0" opacity="0.65"/>
+  <circle cx="432" cy="388" r="9" fill="#d0bef0" opacity="0.45"/>
+  <!-- Peach -->
+  <circle cx="245" cy="455" r="11" fill="#f5a878" opacity="0.55"/>
+  <!-- Teal small -->
+  <circle cx="445" cy="118" r="10" fill="#5cbfb0" opacity="0.55"/>
+
+  <!-- Thin branch suggestion top-right -->
+  <path d="M340 62 Q368 85 388 108" fill="none" stroke="#c8856a" stroke-width="3.5" opacity="0.35" stroke-linecap="round"/>
+  <path d="M388 108 Q410 130 418 158" fill="none" stroke="#c8856a" stroke-width="2.5" opacity="0.25" stroke-linecap="round"/>
+
+  <!-- Main character あ -->
+  <text x="256" y="328"
+        font-family="'Hiragino Mincho ProN','Yu Mincho','MS Mincho',Georgia,serif"
+        font-size="232" font-weight="700" text-anchor="middle"
+        fill="#2e6e58" opacity="0.92">あ</text>
+
+  <!-- Subtle shadow/depth under character -->
+  <text x="259" y="331"
+        font-family="'Hiragino Mincho ProN','Yu Mincho','MS Mincho',Georgia,serif"
+        font-size="232" font-weight="700" text-anchor="middle"
+        fill="#1a4a38" opacity="0.08">あ</text>
+
 </svg>
