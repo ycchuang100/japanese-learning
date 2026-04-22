@@ -1,45 +1,61 @@
-name: 每日日文新聞學習更新
+name: 每日日文學習更新
 
 on:
   schedule:
-    # 每天台灣時間早上 8:00 執行（UTC 00:00）
+    # 每天台灣時間早上 8:00（UTC 00:00）
     - cron: '0 0 * * *'
-    # 每天台灣時間下午 3:00 執行（UTC 07:00）
-    - cron: '0 7 * * *'
+    # 每天台灣時間下午 4:00（UTC 08:00）
+    - cron: '0 8 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  update-daily-lesson:
+  morning-news:
+    name: 早上8點 — 新聞分析
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 * * *'
 
     steps:
-      - name: 取得程式碼
-        uses: actions/checkout@v4
-
-      - name: 設定 Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: 早上8點 — 執行新聞分析
-        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && contains(github.event.schedule, '0 0'))
+      - name: 執行新聞分析
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node fetch-and-analyze.js
 
-      - name: 下午3點 — 執行美句生成
-        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && contains(github.event.schedule, '0 7'))
+      - name: 提交更新
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'bot@github.com'
+          git add today.json
+          git diff --staged --quiet || git commit -m "每日新聞更新：$(date +'%Y-%m-%d')"
+          git push
+
+  afternoon-poem:
+    name: 下午4點 — 美句生成
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 8 * * *'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 執行美句生成
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node daily-poem.js
 
-      - name: 提交並推送更新
+      - name: 提交更新
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'bot@github.com'
-          git add today.json today-poem.json 2>/dev/null || true
-          git diff --staged --quiet || git commit -m "每日更新：$(date +'%Y-%m-%d %H:%M') 日文學習內容"
+          git add today-poem.json
+          git diff --staged --quiet || git commit -m "每日美句更新：$(date +'%Y-%m-%d')"
           git push
