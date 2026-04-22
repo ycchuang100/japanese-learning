@@ -1,0 +1,18 @@
+{
+  "name": "日文學習：日文詞句賞析",
+  "short_name": "日文學習",
+  "description": "每天自動更新NHK新聞學習與日文美句",
+  "start_url": "/japanese-learning/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="#1a1a2e"/>
+  <!-- Subtle circle decoration -->
+  <circle cx="380" cy="140" r="120" fill="none" stroke="#2d6a4f" stroke-width="2" opacity="0.4"/>
+  <circle cx="380" cy="140" r="80" fill="none" stroke="#2d6a4f" stroke-width="1.5" opacity="0.25"/>
+  <!-- 文 character - main visual -->
+  <text x="256" y="310" font-family="serif" font-size="260" font-weight="700" text-anchor="middle" fill="#a7f3c6">文</text>
+  <!-- Bottom accent line -->
+  <rect x="140" y="390" width="232" height="3" rx="1.5" fill="#2d6a4f" opacity="0.8"/>
+  <!-- Small dot decorations -->
+  <circle cx="140" cy="391" r="5" fill="#a7f3c6" opacity="0.7"/>
+  <circle cx="372" cy="391" r="5" fill="#a7f3c6" opacity="0.7"/>
+</svg>
