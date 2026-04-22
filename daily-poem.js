@@ -6,13 +6,32 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+function extractFields(text) {
+  // Extract fields directly with regex instead of JSON.parse
+  function getVal(key) {
+    const m = text.match(new RegExp(`"${key}"\\s*:\\s*"([^"]*)"`) );
+    return m ? m[1] : '';
+  }
+  const jp = getVal('jp');
+  if (!jp) throw new Error('Cannot find jp field in: ' + text.substring(0, 300));
+  return {
+    jp, yomi: getVal('yomi'), zh: getVal('zh'),
+    theme: getVal('theme'), note: getVal('note'),
+    vocab: [
+      { word: getVal('w1'), kana: getVal('r1'), meaning: getVal('m1') },
+      { word: getVal('w2'), kana: getVal('r2'), meaning: getVal('m2') },
+      { word: getVal('w3'), kana: getVal('r3'), meaning: getVal('m3') }
+    ]
+  };
+}
+
 function callGemini(theme) {
   return new Promise((resolve, reject) => {
     const prompt = `以「${theme}」為主題創作一句原創日文美句。只回傳以下JSON，不加任何說明或markdown，所有值不含換行符：{"jp":"日文句子10-15字","yomi":"平假名","zh":"中文譯","theme":"${theme}","w1":"單字1","r1":"讀音1","m1":"意思1","w2":"單字2","r2":"讀音2","m2":"意思2","w3":"單字3","r3":"讀音3","m3":"意思3","note":"文法說明15字內"}`;
 
     const postData = JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.8, maxOutputTokens: 400 }
+      generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
     });
 
     const options = {
@@ -33,17 +52,9 @@ function callGemini(theme) {
             return;
           }
           const text = resp.candidates[0].content.parts[0].text;
-          const jsonMatch = text.match(/\{[^{}]*\}/s);
-          if (!jsonMatch) throw new Error('No JSON found: ' + text.substring(0, 200));
-          const raw = JSON.parse(jsonMatch[0]);
-          resolve({
-            jp: raw.jp, yomi: raw.yomi, zh: raw.zh, theme: raw.theme, note: raw.note,
-            vocab: [
-              { word: raw.w1, kana: raw.r1, meaning: raw.m1 },
-              { word: raw.w2, kana: raw.r2, meaning: raw.m2 },
-              { word: raw.w3, kana: raw.r3, meaning: raw.m3 }
-            ]
-          });
+          // Use regex field extraction instead of JSON.parse — tolerates truncation
+          const poem = extractFields(text);
+          resolve(poem);
         } catch(e) { reject(e); }
       });
     });
@@ -61,7 +72,6 @@ async function generatePoem() {
   ];
   const theme = themes[new Date().getDate() % themes.length];
 
-  // 最多重試3次，每次等待30秒
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       console.log(`🔄 嘗試第 ${attempt} 次...`);
