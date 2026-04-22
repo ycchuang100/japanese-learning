@@ -4,6 +4,8 @@
 // ═══════════════════════════════════════════════════════════
 
 const https = require('https');
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
