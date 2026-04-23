@@ -2,9 +2,18 @@ name: 每日日文學習更新
 
 on:
   schedule:
+    # 每天台灣時間早上 8:00（UTC 00:00）
     - cron: '0 0 * * *'
+    # 每天台灣時間下午 4:00（UTC 08:00）
     - cron: '0 8 * * *'
+  # 手動觸發
   workflow_dispatch:
+  # 每次推送也觸發（防止排程被 GitHub 暫停）
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/daily-lesson.yml'
 
 permissions:
   contents: write
@@ -13,7 +22,9 @@ jobs:
   morning-news:
     name: 早上8點 — 新聞分析
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 * * *'
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.schedule == '0 0 * * *'
 
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +47,9 @@ jobs:
   afternoon-poem:
     name: 下午4點 — 美句生成
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 8 * * *'
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.schedule == '0 8 * * *'
 
     steps:
       - uses: actions/checkout@v4
