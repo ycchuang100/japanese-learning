@@ -6,9 +6,16 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function callGemini(theme) {
+// 依序嘗試多個模型，找到可用的為止
+const MODELS = [
+  'gemini-1.5-flash',
+  'gemini-1.5-flash-latest',
+  'gemini-2.0-flash-lite',
+  'gemini-2.5-flash'
+];
+
+function callGemini(theme, model) {
   return new Promise((resolve, reject) => {
-    // Ask for a simple numbered list format — much easier to parse than JSON
     const prompt = `以「${theme}」為主題，創作一句原創日文美句（10-15字，帶詩意，中島みゆき風格）。
 請用以下格式回答，每行一個欄位，不要加其他說明：
 JP: （日文句子）
@@ -23,16 +30,16 @@ M2: （單字2意思）
 W3: （重要單字3）
 R3: （單字3讀音）
 M3: （單字3意思）
-NOTE: （文法說明，15字內）`;
+NOTE: （文法說明15字內）`;
 
     const postData = JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.8, maxOutputTokens: 500 }
+      generationConfig: { temperature: 0.8, maxOutputTokens: 600 }
     });
 
     const options = {
       hostname: 'generativelanguage.googleapis.com',
-      path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      path: `/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,18 +58,17 @@ NOTE: （文法說明，15字內）`;
             return;
           }
           const text = resp.candidates[0].content.parts[0].text;
-          console.log('📝 Raw response:\n' + text);
+          console.log('📝 Response:\n' + text.substring(0, 300));
 
-          // Parse line-by-line format
           function getLine(key) {
             const m = text.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'));
-            return m ? m[1].trim() : '';
+            return m ? m[1].trim().replace(/（|）/g, '') : '';
           }
 
           const jp = getLine('JP');
-          if (!jp) throw new Error('Cannot find JP field in response');
+          if (!jp) throw new Error('Cannot find JP field');
 
-          const poem = {
+          resolve({
             jp,
             yomi: getLine('YOMI'),
             zh: getLine('ZH'),
@@ -73,8 +79,7 @@ NOTE: （文法說明，15字內）`;
               { word: getLine('W2'), kana: getLine('R2'), meaning: getLine('M2') },
               { word: getLine('W3'), kana: getLine('R3'), meaning: getLine('M3') }
             ]
-          };
-          resolve(poem);
+          });
         } catch(e) {
           reject(new Error('Parse error: ' + e.message));
         }
@@ -94,21 +99,22 @@ async function generatePoem() {
   ];
   const theme = themes[new Date().getDate() % themes.length];
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  // 每個模型試一次，失敗就換下一個
+  for (const model of MODELS) {
+    console.log(`🤖 嘗試模型：${model}`);
     try {
-      console.log(`🔄 嘗試第 ${attempt} 次（主題：${theme}）...`);
-      const poem = await callGemini(theme);
+      const poem = await callGemini(theme, model);
+      console.log(`✅ 模型 ${model} 成功！`);
       return poem;
     } catch(e) {
-      console.log(`⚠️  第 ${attempt} 次失敗：${e.message}`);
-      if (attempt < 3) {
-        console.log('⏳ 等待 30 秒後重試...');
-        await sleep(30000);
-      } else {
-        throw e;
+      console.log(`⚠️  模型 ${model} 失敗：${e.message}`);
+      if (e.message.includes('503') || e.message.includes('UNAVAILABLE')) {
+        console.log('⏳ 等待 15 秒...');
+        await sleep(15000);
       }
     }
   }
+  throw new Error('All models failed');
 }
 
 async function main() {
@@ -120,12 +126,10 @@ async function main() {
     const today = new Date().toISOString().split('T')[0];
     const output = { date: today, generatedAt: new Date().toISOString(), ...poem };
     fs.writeFileSync(path.join(__dirname, 'today-poem.json'), JSON.stringify(output, null, 2), 'utf8');
-    console.log('✅ Saved!');
-    console.log('🌸 JP:', poem.jp);
+    console.log('✅ Saved! JP:', poem.jp);
     console.log('🇹🇼 ZH:', poem.zh);
-    console.log('📖 YOMI:', poem.yomi);
   } catch(e) {
-    console.error('❌ All retries failed:', e.message);
+    console.error('❌ Error:', e.message);
     process.exit(1);
   }
 }
