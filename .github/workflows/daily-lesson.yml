@@ -2,80 +2,40 @@ name: 每日日文學習更新
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-    - cron: '0 8 * * *'
+    - cron: '0 0 * * *'   # 台灣時間早上 8:00
+    - cron: '0 8 * * *'   # 台灣時間下午 4:00
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  morning-news:
-    name: 早上8點 — 新聞分析
+  run-daily:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
-      - name: 判斷是否執行新聞
-        id: check
-        run: |
-          SCHEDULE="${{ github.event.schedule }}"
-          EVENT="${{ github.event_name }}"
-          if [ "$EVENT" = "workflow_dispatch" ] || [ "$SCHEDULE" = "0 0 * * *" ]; then
-            echo "run=true" >> $GITHUB_OUTPUT
-          else
-            echo "run=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: 執行新聞分析
-        if: steps.check.outputs.run == 'true'
+      - name: 早上8點執行新聞分析
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 * * *'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node fetch-and-analyze.js
+        run: node fetch-news.js
 
-      - name: 提交新聞更新
-        if: steps.check.outputs.run == 'true'
+      - name: 下午4點執行美句生成
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 8 * * *'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node fetch-poem.js
+
+      - name: 推送更新
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'bot@github.com'
-          git add today.json
-          git diff --staged --quiet || (git commit -m "每日新聞更新：$(date +'%Y-%m-%d')" && git pull --rebase && git push)
-
-  afternoon-poem:
-    name: 下午4點 — 美句生成
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: 判斷是否執行美句
-        id: check
-        run: |
-          SCHEDULE="${{ github.event.schedule }}"
-          EVENT="${{ github.event_name }}"
-          if [ "$EVENT" = "workflow_dispatch" ] || [ "$SCHEDULE" = "0 8 * * *" ]; then
-            echo "run=true" >> $GITHUB_OUTPUT
-          else
-            echo "run=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: 執行美句生成
-        if: steps.check.outputs.run == 'true'
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node daily-poem.js
-
-      - name: 提交美句更新
-        if: steps.check.outputs.run == 'true'
-        run: |
-          git config --global user.name 'GitHub Actions Bot'
-          git config --global user.email 'bot@github.com'
-          git add today-poem.json
-          git diff --staged --quiet || (git commit -m "每日美句更新：$(date +'%Y-%m-%d')" && git pull --rebase && git push)
+          git add today.json today-poem.json 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "每日更新 $(date +'%Y-%m-%d %H:%M' -d '+8 hours')"
+          git pull --rebase origin main
+          git push origin main
